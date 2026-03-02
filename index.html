@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="src/index.css">
+    <title>AniTox | Official</title>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo"><span class="red-text">Ani</span>Tox</div>
+        <nav class="desktop-nav">
+            <a href="javascript:void(0)" onclick="home()">Home</a>
+            <a href="javascript:void(0)" onclick="searchAnim()">Search</a>
+            <a href="javascript:void(0)" onclick="help()">Help</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        
+        <section id="home">
+            <h1 class="section-title">Top <span class="red-text">Anime</span></h1>
+            <div id="top-anime-grid" class="anime-grid"></div>
+        </section>
+
+        <section id="search" hidden>
+            <div class="search-container">
+                <div class="search-bar">
+                    <input type="text" id="query_search" placeholder="Search anime names...">
+                    <button id="done">🔍</button>
+                </div>
+            </div>
+            <div id="search-anime-grid" class="anime-grid"></div>
+        </section>
+
+        <div id="details" class="details-view" hidden>
+            <div class="back-nav">
+                <button onclick="home()" class="back-btn">← Back to Home</button>
+            </div>
+            <main id="details-content" class="details-container">
+                </main>
+        </div>
+
+        <!-- player -->
+            <div id="player-view" class="player-view" hidden>
+                <div class="player-nav">
+                    <button onclick="home()" class="back-btn">← Back</button>
+                    <h2 id="now-watching-title" class="red-text">Watching Anime</h2>
+                </div>
+
+                <div class="player-layout">
+                    <aside class="episode-sidebar">
+                        <div class="sidebar-header">
+                            <h3>List of episodes:</h3>
+                            <input type="text" placeholder="Number of Ep" class="ep-search">
+                        </div>
+                        <div id="episode-list" class="ep-list">
+                            </div>
+                    </aside>
+
+                    <main class="video-container">
+                        <div class="video-placeholder">
+                            <div class="loader"></div>
+                            <p>Video Player Placeholder</p>
+                            </div>
+
+                        <div class="player-controls">
+                            <div class="control-row">
+                                <span>Light On</span>
+                                <span class="green-text">Auto Play ON</span>
+                                <span class="green-text">Auto Next ON</span>
+                            </div>
+                            
+                            <div class="server-selection">
+                                <div class="server-row">
+                                    <span>DUB:</span>
+                                    <button class="server-btn active">Vidstreaming</button>
+                                    <button class="server-btn">Vidcloud</button>
+                                </div>
+                                <div class="server-row">
+                                    <span>SUB:</span>
+                                    <button class="server-btn active">Vidstreaming</button>
+                                    <button class="server-btn">Vidcloud</button>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+        <!-- player -->
+        <section id="help" hidden>
+            <div class="help-content">
+                <h2>Help <span class="red-text">Center</span></h2>
+                <p>XD.</p>
+            </div>
+        </section>
+
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="javascript:void(0)" onclick="home()">🏠<span>Home</span></a>
+        <a href="javascript:void(0)" onclick="searchAnim()">🔍<span>Search</span></a>
+        <a href="javascript:void(0)" onclick="help()">❓<span>Help</span></a>
+    </nav>
+
+    <script src="src/main.js"></script>
+</body>
+</html>
