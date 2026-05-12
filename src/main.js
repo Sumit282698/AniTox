@@ -38,7 +38,7 @@ function loadVideo(videoId) {
 // 2. THE WAITER: Gets data from your Python Kitchen
 async function fetchAnimeDetails(id, animeTitle) {
     try {
-        const response = await fetch(`http://127.0.0.1:5000/get-episodes/${id}`);
+        const response = await fetch(`${id}`);
         const result = await response.json(); 
         
         // Pass the data AND the title to the renderer
@@ -73,17 +73,6 @@ function renderEpisodes(episodesArray, animeTitle) {
         
         list.appendChild(item);
     });
-}
-
-async function playRealEpisode(title, epNum) {
-    document.getElementById("now-watching-title").innerText = `Searching for Episode ${epNum}...`;
-    const res = await fetch(`/get-video/${title}/${epNum}`);
-    const data = await res.json();
-    
-    if (data.youtube_id) {
-        loadVideo(data.youtube_id);
-        document.getElementById("now-watching-title").innerText = `Watching: ${title} - Ep ${epNum}`;
-    }
 }
 
 window.showDetails = (anime) => {
@@ -161,5 +150,71 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
     
-    getTopAnime("https://api.jikan.moe/v4/top/anime", topGrid);
+    getTopAnime("https://api.jikan.moe/v4/top/anime?limit=6", topGrid);
 });
+
+
+// Global Help function update
+window.help = () => {
+    hideAll();
+    document.getElementById("help").hidden = false;
+    
+    // Get the current day name dynamically
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const today = days[new Date().getDay()]; 
+    
+    loadSchedule(today);
+};
+
+async function loadSchedule(day) {
+    const tableBody = document.getElementById("schedule-body");
+    
+    // Safety check: if the element isn't found, stop here
+    if (!tableBody) return;
+
+    tableBody.innerHTML = "<tr><td colspan='2' style='color:white; padding:20px;'>Loading...</td></tr>";
+
+    // Update Tab UI (Highlight selected button)
+    document.querySelectorAll('.schedule-tabs button').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText.toLowerCase().includes(day.substring(0, 3)));
+    });
+
+    try {
+        const res = await fetch(`https://api.jikan.moe/v4/schedules?filter=${day}`);
+        const result = await res.json();
+        
+        renderScheduleTable(result.data); 
+    } catch (err) {
+        tableBody.innerHTML = "<tr><td colspan='2' class='red-text'>Failed to load. Try again!</td></tr>";
+    }
+}
+
+function renderScheduleTable(list) {
+    const tableBody = document.getElementById("schedule-body");
+    tableBody.innerHTML = ""; 
+
+    if (!list || list.length === 0) {
+        tableBody.innerHTML = "<tr><td colspan='2' style='color:white;'>No anime found today.</td></tr>";
+        return;
+    }
+
+    list.forEach(anime => {
+        const row = document.createElement("tr");
+        row.className = "schedule-row";
+        
+        // Use showDetails so clicking a row opens the anime info
+        row.onclick = () => showDetails(anime);
+
+        row.innerHTML = `
+            <td class="anime-img-cell">
+                <img src="${anime.images.jpg.small_image_url}" alt="thumb">
+            </td>
+            <td class="anime-info-cell">
+                <div class="anime-name">${anime.title_english || anime.title}</div>
+                <div class="anime-ep">EP: ${anime.episodes || '??'}</div>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+}
