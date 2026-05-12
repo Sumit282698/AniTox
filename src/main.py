@@ -1,9 +1,33 @@
 import requests
 from flask import Flask, jsonify
 from flask_cors import CORS
-
+from youtube_search import YoutubeSearch
 app = Flask(__name__)
 CORS(app)
+
+@app.route('/get-video/<name>/<int:ep>')
+def get_video(name, ep):
+    try:
+        # We search for the specific episode, not the trailer ID
+        query = f"{name} episode {ep} english sub"
+        
+        # max_results=1 ensures we just get the best match
+        results = YoutubeSearch(query, max_results=1).to_dict()
+        
+        if results:
+            # We return the unique video ID (which will be different from the trailer ID)
+            return jsonify({"youtube_id": results[0]['id']})
+        
+        return jsonify({"error": "No episode found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+#anime episodes list show
+@app.route('/get-episodes/<id>')
+def get_episodes(id):
+    raw_data = requests.get(f"https://api.jikan.moe/v4/anime/{id}/episodes")
+    return raw_data.json()
 
 #top anime
 @app.route('/top-anime')
@@ -17,7 +41,8 @@ def search_anime(query):
     url = f"https://api.jikan.moe/v4/anime?q={query}&limit=20"
     response = requests.get(url)
     return jsonify(response.json().get('data', []))
-#testing
+
+#top get anime
 @app.route('/get-anime')
 def get_anime():
     url = "https://api.jikan.moe/v4/seasons/now" 
