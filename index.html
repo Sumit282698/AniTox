@@ -16,14 +16,13 @@
             <a href="javascript:void(0)" onclick="help()">Help</a>
         </nav>
     </header>
-
+            <!-- home -->
     <div class="container">
-        
         <section id="home">
             <h1 class="section-title">Top <span class="red-text">Anime</span></h1>
             <div id="top-anime-grid" class="anime-grid"></div>
         </section>
-
+            <!-- search -->
         <section id="search" hidden>
             <div class="search-container">
                 <div class="search-bar">
@@ -33,66 +32,49 @@
             </div>
             <div id="search-anime-grid" class="anime-grid"></div>
         </section>
-
+        <!-- details -->
         <div id="details" class="details-view" hidden>
             <div class="back-nav">
                 <button onclick="home()" class="back-btn">← Back to Home</button>
             </div>
+            <p id="anime-rating"></p>
             <main id="details-content" class="details-container">
-                </main>
+            </main>
+
+            <div class="overview-container">
+                <h3>Overview:</h3>
+                <div class="scroll-box">
+                    <p id="anime-synopsis">
+                        the greatest treasure in the world, One Piece... [long text here]
+                    </p>
+                </div>
+            </div>
         </div>
 
         <!-- player -->
-            <div id="player-view" class="player-view" hidden>
-                <div class="player-nav">
-                    <button onclick="home()" class="back-btn">← Back</button>
-                    <h2 id="now-watching-title" class="red-text">Watching Anime</h2>
+            <div id="player-view" hidden>
+                <h2 id="now-watching-title">Select an Episode</h2>
+                
+                <div class="video-wrapper">
+                    <iframe 
+                        id="anime-player" 
+                        src="" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen>
+                    </iframe>
                 </div>
 
-                <div class="player-layout">
-                    <aside class="episode-sidebar">
-                        <div class="sidebar-header">
-                            <h3>List of episodes:</h3>
-                            <input type="text" placeholder="Number of Ep" class="ep-search">
-                        </div>
-                        <div id="episode-list" class="ep-list">
-                            </div>
-                    </aside>
-
-                    <main class="video-container">
-                        <div class="video-placeholder">
-                            <div class="loader"></div>
-                            <p>Video Player Placeholder</p>
-                            </div>
-
-                        <div class="player-controls">
-                            <div class="control-row">
-                                <span>Light On</span>
-                                <span class="green-text">Auto Play ON</span>
-                                <span class="green-text">Auto Next ON</span>
-                            </div>
-                            
-                            <div class="server-selection">
-                                <div class="server-row">
-                                    <span>DUB:</span>
-                                    <button class="server-btn active">Vidstreaming</button>
-                                    <button class="server-btn">Vidcloud</button>
-                                </div>
-                                <div class="server-row">
-                                    <span>SUB:</span>
-                                    <button class="server-btn active">Vidstreaming</button>
-                                    <button class="server-btn">Vidcloud</button>
-                                </div>
-                            </div>
-                        </div>
-                    </main>
-                </div>
+                <div id="episode-list"></div>
             </div>
         <!-- player -->
+
+
         <section id="help" hidden>
             <div class="help-content">
                 <h2>Help <span class="red-text">Center</span></h2>
-                <p>XD.</p>
+                <p>This Website Uses Api to show all content on the Page <br> API USED: Jikan API</p>
             </div>
         </section>
 
@@ -104,6 +86,6 @@
         <a href="javascript:void(0)" onclick="help()">❓<span>Help</span></a>
     </nav>
 
-    <script src="src/main.js"></script>
+    <script src="maina.js"></script>
 </body>
 </html>
