@@ -74,7 +74,26 @@
         <section id="help" hidden>
             <div class="help-content">
                 <h2>Help <span class="red-text">Center</span></h2>
-                <p>This Website Uses Api to show all content on the Page <br> API USED: Jikan API</p>
+                <p>This Website Uses API to show all content on the Page <br> API USED: Jikan API</p>
+                
+                <br>
+                <h2>Anime <span class="red-text">Schedule</span></h2>
+                
+                <div class="schedule-tabs">
+                    <button onclick="loadSchedule('monday')">Mon</button>
+                    <button onclick="loadSchedule('tuesday')">Tue</button>
+                    <button onclick="loadSchedule('wednesday')">Wed</button>
+                    <button onclick="loadSchedule('thursday')">Thu</button>
+                    <button onclick="loadSchedule('friday')">Fri</button>
+                    <button onclick="loadSchedule('saturday')">Sat</button>
+                    <button onclick="loadSchedule('sunday')">Sun</button>
+                </div>
+
+                <div id="schedule-grid">
+                    <table class="schedule-table">
+                        <tbody id="schedule-body"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
