@@ -327,38 +327,6 @@ body {
     margin-top: 5px;
 }
 
-
-@media (min-width: 769px) { .bottom-nav { display: none; } }
-
-
-.scroll-box {
-    max-height: 150px; /* Adjust this to make the box taller or shorter */
-    overflow-y: auto;  /* Adds the vertical scrollbar only when needed */
-    padding-right: 10px;
-    margin-bottom: 15px;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #ccc;
-}
-
-/* Customizing the Scrollbar (The "Slider" look) */
-.scroll-box::-webkit-scrollbar {
-    width: 6px;
-}
-
-.scroll-box::-webkit-scrollbar-thumb {
-    background: #555; /* The color of the slider handle */
-    border-radius: 10px;
-}
-
-.scroll-box::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1); /* The background of the slider */
-}
-
-
-
-
-/* Container for both player and list */
 #player-view {
     flex-direction: column;
     align-items: center;
@@ -424,4 +392,62 @@ body {
     color: white;
     border-left: 4px solid #ff0000;
     font-weight: bold;
+}
+
+/* The "Window" */
+.scroll-container {
+    width: 100%;
+    overflow-x: auto; /* Enables horizontal scrolling */
+    padding: 10px 0;
+    scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for a cleaner look (Chrome/Safari) */
+.scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* The Grid inside the scroll */
+.scroll-grid {
+    display: flex; /* Change from 'grid' to 'flex' for the row effect */
+    flex-wrap: nowrap; /* Prevents cards from going to the second line */
+    gap: 15px;
+}
+
+/* Ensure cards stay a fixed size so they don't shrink */
+.scroll-grid .anime-card {
+    flex: 0 0 160px; /* 0 grow, 0 shrink, 160px wide */
+    width: 160px;
+    transition: transform 0.3s ease;
+}
+
+.scroll-grid .anime-card:hover {
+    transform: scale(1.05); /* Nice pop effect */
+}
+
+@media (min-width: 769px) { .bottom-nav { display: none; } }
+
+
+.scroll-box {
+    max-height: 150px; /* Adjust this to make the box taller or shorter */
+    overflow-y: auto;  /* Adds the vertical scrollbar only when needed */
+    padding-right: 10px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #ccc;
+}
+
+
+.scroll-box::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scroll-box::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10px;
+}
+
+.scroll-box::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
 }
