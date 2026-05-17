@@ -20,10 +20,6 @@
     color: #ff0000;
 }
 
-/* Modal Background */
-/* This "freezes" the background and covers the whole screen */
-/* Center the modal on the screen */
-/* Full Screen Details View */
 .details-view {
     padding: 40px 6%;
     animation: fadeIn 0.5s ease;
@@ -63,9 +59,7 @@
 .info-pane h1 { font-size: 2.5rem; margin-top: 0; }
 .synopsis-text { color: #ccc; line-height: 1.8; font-size: 1.1rem; }
 
-@media (max-width: 768px) {
-    .details-container { flex-direction: column; align-items: center; text-align: center; }
-}
+
 /* ttt */
 body {
     background-color: var(--bg);
@@ -425,7 +419,9 @@ body {
     transform: scale(1.05); /* Nice pop effect */
 }
 
-@media (min-width: 769px) { .bottom-nav { display: none; } }
+@media (min-width: 769px) { 
+    .bottom-nav { display: none; } 
+}
 
 
 .scroll-box {
@@ -450,4 +446,155 @@ body {
 
 .scroll-box::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+    .details-container { flex-direction: column; align-items: center; text-align: center; }
+    
+}
+
+.crunchy-details {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+/* The Hero Image */
+.hero-banner {
+    height: 45vh;
+    background-size: cover;
+    background-position: center top;
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+}
+
+.hero-overlay {
+    width: 100%;
+}
+
+.hero-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+}
+
+.hero-meta {
+    font-size: 0.9rem;
+    color: #ccc;
+    margin-bottom: 10px;
+}
+
+.rating-pill {
+    background: var(--card-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+/* Buttons */
+.action-bar {
+    display: flex;
+    gap: 10px;
+    padding: 0 20px;
+    margin-top: 20px;
+}
+
+.start-btn {
+    flex: 1;
+    background: var(--red); /* Crunchyroll Orange */
+    color: var(--card-bg);
+    border: none;
+    padding: 15px;
+    font-weight: 900;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon-btn-outline {
+    width: 50px;
+    background: transparent;
+    border: 2px solid --bg;
+    color: var(--bg);
+    border-radius: 4px;
+}
+
+/* Icons/Interaction */
+.interaction-row {
+    display: flex;
+    justify-content: space-around;
+    padding: 25px 0;
+}
+
+.inter-item {
+    text-align: center;
+    color: #ccc;
+    font-size: 0.7rem;
+}
+
+.inter-item p { margin-top: 5px; }
+
+/* Synopsis */
+.synopsis-box {
+    padding: 0 20px 40px 20px;
+}
+
+.description {
+    line-height: 1.6;
+    color: #eee;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}
+
+
+/* Tablet & Mobile Styles */
+@media (max-width: 768px) {
+    .details-container {
+        flex-direction: column; /* Stack vertically */
+        gap: 20px;
+        padding: 10px;
+    }
+
+    .mobile-top-row {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        width: 100%;
+    }
+
+    .details-container img {
+        width: 140px; /* Smaller image for mobile */
+        height: auto;
+    }
+
+    .info-pane h1 {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+    }
+
+    /* The Info Box styling */
+    .status-box {
+        background: #1a1a1a;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #333;
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Two items per row */
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .box-item {
+        font-size: 0.9rem;
+        color: #bbb;
+    }
+
+    .box-item strong {
+        color: var(--red);
+        display: block; /* Puts the value on a new line inside the box */
+    }
 }

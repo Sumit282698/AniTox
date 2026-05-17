@@ -48,7 +48,6 @@ async function fetchAnimeDetails(id, animeTitle) {
     }
 }
 
-// 3. THE RENDERER: Draws the list on the screen
 function renderEpisodes(episodesArray, animeTitle) {
     const list = document.getElementById("episode-list");
     list.innerHTML = ""; 
@@ -72,48 +71,141 @@ function renderEpisodes(episodesArray, animeTitle) {
     });
 }
 
+let animeIdLookupTable = {};
+
+async function loadAnimeIdBridge() {
+    try {
+        const response = await fetch('./anime_ids.json');
+        const rawData = await response.json();
+
+        Object.values(rawData).forEach(entry => {
+            if (entry.mal_id || entry.anilist_id) {
+                const keyId = String(entry.mal_id || entry.anilist_id);
+                animeIdLookupTable[keyId] = {
+                    tvdbId: entry.tvdb_id,
+                    tmdbShowId: entry.tmdb_show_id || null,
+                    tmdbMovieId: entry.tmdb_movie_id || null,
+                    imdbId: entry.imdb_id || null
+                };
+            }
+        });
+        console.log("🎯 ID Bridge Synced. Total Indexed Keys:", Object.keys(animeIdLookupTable).length);
+    } catch (err) {
+        console.error("Critical error building local map cross-reference table:", err);
+    }
+}
+
 window.showDetails = (anime) => {
     hideAll();
+    window.currentAnime = anime;
     const content = document.getElementById("details-content");
+
+    const title = anime.title_english || anime.title || anime.name;
+    const bannerImg = anime.images?.jpg?.large_image_url || anime.poster_url || anime.poster;
+    const score = anime.score || anime.rating || 'N/A';
     
+    let genresText = 'Anime';
+    if (Array.isArray(anime.genres)) {
+        genresText = anime.genres.map(g => g.name).slice(0, 3).join(', ');
+    } else if (typeof anime.genre === 'string' || typeof anime.genres === 'string') {
+        genresText = anime.genre || anime.genres;
+    }
+
     content.innerHTML = `
-        <img src="${anime.images.jpg.large_image_url}">
-        <div class="info-pane">
-            <h1 class="red-text">${anime.title_english || anime.title}</h1>
-            <p style="font-size: 18px">Rating: ${anime.score || 'N/A'} ⭐</p>
-            <p>Total Episodes: ${anime.episodes || '??'}</p>
-            <p>Status: ${anime.status}</p>
-            <button class="watch-btn" onclick='watchNow(${JSON.stringify(anime).replace(/'/g, "&apos;")})' 
-                style="background:var(--red); padding:15px 30px; border:none; color:white; font-weight:bold; cursor:pointer; border-radius:5px; margin-top:20px;">
-                ▶ WATCH NOW
-            </button>
+        <div class="crunchy-details">
+            <div class="hero-banner" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0) 0%, #000 100%), url('${bannerImg}');">
+                <div class="hero-overlay">
+                    <h1 class="hero-title">${title}</h1>
+                    <p class="hero-meta">
+                        <span class="rating-pill">U/A 16+</span> • Sub | Dub • ${genresText}
+                    </p>
+                    <div class="hero-stars">
+                        ★ ★ ★ ★ ★ <span class="score-num">${score}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button class="start-btn" onclick="watchNow(window.currentAnime)">
+                    <i class="play-icon">▶</i> START WATCHING
+                </button>
+            </div>
+
+            <div class="interaction-row">
+                <div class="inter-item"><span class="plus">+</span><p>MY LIST</p></div>
+                <div class="inter-item"><span class="share">🔗</span><p>SHARE</p></div>
+            </div>
         </div>
     `;
-    document.getElementById("anime-synopsis").innerText = anime.synopsis;
+    
+    const synopsisEl = document.getElementById("anime-synopsis");
+    if (synopsisEl) {
+        synopsisEl.innerText = anime.synopsis || anime.description || anime.overview || "No description available.";
+    }
+    
     document.getElementById("details").hidden = false;
+    window.scrollTo(0, 0);
+};
+
+window.watchNow = (anime) => {
+    const malIdKey = String(anime.mal_id);
+    const mapping = animeIdLookupTable[malIdKey];
+
+    if (!mapping) {
+        alert("This selection hasn't been cross-referenced inside anime_ids.json yet.");
+        return;
+    }
+
+    const trackingId = mapping.imdbId || mapping.tmdbShowId || mapping.tmdbMovieId || mapping.tvdbId;
+    
+    if (!trackingId) {
+        alert("No valid structural playback code could be derived for this card.");
+        return;
+    }
+
+    hideAll();
+    document.getElementById("player-view").hidden = false;
+    
+    const player = document.getElementById("anime-player");
+    const titleHeader = document.getElementById("now-watching-title");
+    const title = anime.title_english || anime.title;
+
+    const isTv = anime.type ? (anime.type.toLowerCase() !== "movie") : true;
+    const season = 1;
+    const episode = 1;
+
+    if (!isTv) {
+        player.src = `https://vaplayer.ru/embed/movie/${trackingId}`; 
+    } else {
+        player.src = `https://vaplayer.ru/embed/tv/${trackingId}/${season}/${episode}`;
+    }
+
+    if (titleHeader) {
+        titleHeader.innerText = `Streaming: ${title}`;
+    }
+    console.log(`🎬 Video Stream Frame Fired: ${player.src}`);
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    const topGrid = document.getElementById("top-anime-grid");
-    const upcomingGrid = document.getElementById("upcoming-anime-grid");
-    const airingGrid = document.getElementById("airing-anime-grid")
+    loadAnimeIdBridge();
+
+    const moviesGrid = document.getElementById("movies-anime-grid");
+    const showsGrid = document.getElementById("shows-anime-grid");
     const searchGrid = document.getElementById("search-anime-grid");
-    const popularGrid = document.getElementById("popular-anime-grid");
-    const favGrid = document.getElementById("fav-anime-grid");
     const searchBtn = document.getElementById("done");
     const searchInput = document.getElementById("query_search");
-    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
     async function fetchAndRender(url, target) {
         if (!target || !url) return; 
-        target.innerHTML = "<p style='color:white;'>Loading...</p>";
+        target.innerHTML = "<p style='color:white;'>Loading archive entries...</p>";
         try {
             const response = await fetch(url);
             const result = await response.json();
-            renderGrid(target, result.data); 
+
+            renderGrid(target, result.data || []); 
         } catch (e) {
-            console.error("Fetch Error:", e);
-            target.innerHTML = "<p style='color:var(--red);'>API is OFFLINE</p>";
+            console.error("Jikan Endpoint Fetch Failure:", e);
+            target.innerHTML = "<p style='color:var(--red);'>API is OFFLINE (Rate Limited)</p>";
         }
     }
 
@@ -125,12 +217,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         list.forEach(anime => {
+            const cardImg = anime.images?.jpg?.image_url || anime.poster_url;
+            const cardTitle = anime.title_english || anime.title;
+
+            if (!cardImg) return; 
+
             const card = document.createElement("div");
             card.className = "anime-card";
             card.innerHTML = `
-                <img src="${anime.images.jpg.image_url}">
+                <img src="${cardImg}" alt="${cardTitle}" onerror="this.src='https://placehold.co/300x450/111/fff?text=No+Poster';">
                 <div class="card-info">
-                    <h3>${anime.title_english || anime.title}</h3>
+                    <h3>${cardTitle}</h3>
                 </div>
             `;
             card.onclick = () => typeof showDetails === 'function' && showDetails(anime); 
@@ -138,25 +235,33 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    searchBtn.onclick = () => {
-        const query = searchInput.value;
-        if (query) {
-            fetchAndRender(`https://api.jikan.moe/v4/anime?q=${query}&limit=20`, searchGrid);
+    // LIVE JIKAN SEARCH pipeline mapping
+    searchBtn.onclick = async () => {
+        const query = encodeURIComponent(searchInput.value.trim());
+        if (!query) return;
+
+        if (searchGrid) {
+            searchGrid.innerHTML = "<p style='color:white;'>Querying live indices...</p>";
+        }
+
+        try {
+            const response = await fetch(`https://api.jikan.moe/v4/anime?q=${query}&limit=20`);
+            const result = await response.json();
+            renderGrid(searchGrid, result.data); 
+        } catch (e) {
+            console.error("Search Error:", e);
+            if (searchGrid) {
+                searchGrid.innerHTML = "<p style='color:var(--red);'>Gateway connection timeout.</p>";
+            }
         }
     };
     
     async function initHome() {
-        fetchAndRender("https://api.jikan.moe/v4/top/anime?filter=airing", airingGrid);
-        fetchAndRender("https://api.jikan.moe/v4/top/anime?limit=15", topGrid);
-        fetchAndRender("https://api.jikan.moe/v4/top/anime?filter=upcoming&limit=15", upcomingGrid);
-        await sleep(2000);
-        fetchAndRender("https://api.jikan.moe/v4/top/anime?filter=favorite&limit=15", favGrid);
-        fetchAndRender("https://api.jikan.moe/v4/top/anime?filter=bypopularity&limit=15", popularGrid);
-        
-}
+        await fetchAndRender("https://api.jikan.moe/v4/top/anime?type=movie&limit=15", moviesGrid);
+        await fetchAndRender("https://api.jikan.moe/v4/top/anime?type=tv&filter=airing&limit=15", showsGrid);
+    }
 
-initHome();
-    
+    initHome();
 });
 
 window.help = () => {
